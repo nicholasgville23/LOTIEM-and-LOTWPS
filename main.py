@@ -29,7 +29,6 @@ DEFAULT_CONFIG: dict[str, Any] = {
     "nws_user_agent": "LOTIEM-BMH/0.1 (https://github.com/nicholasgville23/LOTIEM-and-LOTWPS)",
     "station_host": "127.0.0.1",
     "station_port": 6000,
-    "language": "en",
     "preferred_voice": "",
     "refresh_minutes": 5,
     "stations": [
