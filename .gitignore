@@ -218,3 +218,7 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# LOTIEM local settings and saved drafts
+config.json
+drafts.json
