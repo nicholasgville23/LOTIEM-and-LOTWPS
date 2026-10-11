@@ -607,7 +607,7 @@ class LOTIEMApp:
 
     def generate_header(self) -> None:
         ttaaii, cccc, bbb = self.ttaa_var.get().strip().upper(), self.cccc_var.get().strip().upper(), self.bbb_var.get().strip().upper()
-        if len(tt aaii := ttaaii) != 6 or not ttaaii.isalnum():
+        if len(ttaaii) != 6 or not ttaaii.isalnum():
             messagebox.showerror("Header preview", "TTAAii must be exactly six letters/numbers for this preview.")
             return
         if len(cccc) != 4 or not cccc.isalnum():
