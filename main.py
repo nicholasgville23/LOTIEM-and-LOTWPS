@@ -195,6 +195,8 @@ class LOTIEMApp:
         self._refreshing = False
         self._loop_thread: threading.Thread | None = None
         self._loop_stop = threading.Event()
+        self._loop_voice_id = ""
+        self._refresh_after_id: str | None = None
         self.voice_options = SpeechService.voices()
         self.root.title("BMH — NOAA Weather Radio / LOTIEM & LOTWPS")
         self.root.geometry("1360x880")
@@ -457,6 +459,7 @@ class LOTIEMApp:
         if error:
             self.status_var.set("NWS refresh failed — showing no new data.")
             messagebox.showerror("NWS data refresh failed", f"{error}\n\nCheck internet access and the configured User-Agent.")
+            self._schedule_next_refresh()
             return
         self.alerts, self.daily_periods, self.hourly_periods = alerts, daily, hourly
         for tree in (self.alert_tree,):
@@ -482,6 +485,16 @@ class LOTIEMApp:
             self.alert_detail.delete("1.0", "end")
             self.alert_detail.insert("1.0", "No active NWS alerts were returned for the configured point. This is a live result, not a generated test alert.")
             self.alert_detail.configure(state="disabled")
+        self._schedule_next_refresh()
+
+    def _schedule_next_refresh(self) -> None:
+        if self._refresh_after_id is not None:
+            try:
+                self.root.after_cancel(self._refresh_after_id)
+            except tk.TclError:
+                pass
+        minutes = max(1, min(60, int(self.config.get("refresh_minutes", 5))))
+        self._refresh_after_id = self.root.after(minutes * 60 * 1000, self.refresh_data)
 
     def _render_forecast(self) -> None:
         self.forecast_text.configure(state="normal")
@@ -725,6 +738,7 @@ class LOTIEMApp:
             self.status_var.set("Stopping local speech loop…")
             return
         self._loop_stop.clear()
+        self._loop_voice_id = self._chosen_voice_id()
         self._loop_thread = threading.Thread(target=self._local_alert_loop, daemon=True, name="local-alert-loop")
         self._loop_thread.start()
         self.loop_button.configure(text="Stop Local Alert Speech Loop")
@@ -742,7 +756,7 @@ class LOTIEMApp:
                     identifier = str(feature.get("id") or p.get("id") or short_alert(feature))
                     if identifier not in announced:
                         announced.add(identifier)
-                        SpeechService.speak(format_alert(feature), self._chosen_voice_id())
+                        SpeechService.speak(format_alert(feature), self._loop_voice_id)
                 wait_seconds = max(60, int(self.config.get("refresh_minutes", 5)) * 60)
             except Exception as exc:
                 self.root.after(0, lambda err=str(exc): self.status_var.set(f"Speech loop data error: {err}"))
