@@ -1,0 +1,25 @@
+{
+  "latitude": 41.4675,
+  "longitude": -87.06,
+  "timezone": "America/Chicago",
+  "nws_user_agent": "LOTIEM-BMH/0.1 (https://github.com/nicholasgville23/LOTIEM-and-LOTWPS)",
+  "station_host": "127.0.0.1",
+  "station_port": 6000,
+  "language": "en",
+  "preferred_voice": "",
+  "refresh_minutes": 5,
+  "stations": [
+    {
+      "id": "WXK89",
+      "city": "Valparaiso, Indiana",
+      "frequency_mhz": 162.4,
+      "enabled": true
+    },
+    {
+      "id": "KBB57",
+      "city": "Gary, Indiana",
+      "frequency_mhz": 162.425,
+      "enabled": true
+    }
+  ]
+}
